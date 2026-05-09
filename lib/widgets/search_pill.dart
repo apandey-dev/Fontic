@@ -33,11 +33,17 @@ class SearchPill extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Material(
-              type: MaterialType
-                  .transparency, // Important for TextField inside custom containers
+              type: MaterialType.transparency,
               child: TextField(
                 controller: controller,
                 onChanged: onChanged,
+                autofocus:
+                    false, // 1. App start hote hi keyboard open nahi hoga
+                // 2. Keyboard ke bahar kahin bhi tap karne par keyboard band ho jayega
+                onTapOutside: (event) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                },
+
                 decoration: InputDecoration(
                   hintText: "Search 1500+ fonts...",
                   hintStyle: TextStyle(
@@ -47,7 +53,6 @@ class SearchPill extends StatelessWidget {
                   border: InputBorder.none,
                   isDense: true,
                 ),
-                // Font family apne aap AppTheme se 'Fredoka' uthayega
                 style: const TextStyle(fontSize: 16, color: Colors.black),
               ),
             ),
@@ -57,7 +62,9 @@ class SearchPill extends StatelessWidget {
               onTap: () {
                 controller.clear();
                 onChanged('');
-                FocusScope.of(context).unfocus();
+                FocusScope.of(
+                  context,
+                ).unfocus(); // Clear karne par bhi keyboard band
               },
               child: const Icon(
                 CupertinoIcons.clear_circled_solid,

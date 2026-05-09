@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   List<FontModel> _displayFonts = [];
 
-  // NAYA: Categories ki list aur selected state
+  // Categories ki list
   final List<String> _categories = [
     'All',
     'Sans Serif',
@@ -30,34 +30,34 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
   String _selectedCategory = 'All';
 
+  // Grid vs List State
+  bool _isGridView = false;
+
   @override
   void initState() {
     super.initState();
-    _applyFilters(); // Shuruat me list load karne ke liye
+    _applyFilters();
   }
 
-  // NAYA: Ye function Search Bar aur Category dono ko ek sath filter karta hai
+  // Search Bar aur Category dono ko handle karta hai
   void _applyFilters() {
     setState(() {
       String query = _searchController.text.toLowerCase();
       Iterable<FontModel> filtered = FontService.getAllFonts();
 
-      // 1. Search Query se filter karo
       if (query.isNotEmpty) {
         filtered = filtered.where(
           (font) => font.name.toLowerCase().contains(query),
         );
       }
 
-      // 2. Category se filter karo (Agar 'All' nahi hai)
       if (_selectedCategory != 'All') {
         filtered = filtered.where(
           (font) => font.guessCategory == _selectedCategory,
         );
       }
 
-      // Performance ke liye sirf pehle 30 render karo
-      _displayFonts = filtered.take(30).toList();
+      _displayFonts = filtered.take(30).toList(); // Performance limit
     });
   }
 
@@ -66,38 +66,74 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
+
+        // NAYA: Jab user list ko scroll karega toh keyboard band ho jayega
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+
         slivers: [
+          // 1. App Bar
           CupertinoSliverNavigationBar(
             largeTitle: const Text("Fontic Vault"),
             backgroundColor: Colors.white.withOpacity(0.8),
             border: null,
-            trailing: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(builder: (_) => const FavoritesScreen()),
-                );
-              },
-              child: const Icon(
-                LucideIcons.heart,
-                color: Colors.black,
-                size: 26,
-              ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Layout Toggle Button (Grid/List)
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isGridView = !_isGridView;
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      _isGridView
+                          ? LucideIcons.layoutList
+                          : LucideIcons.layoutGrid,
+                      color: Colors.black,
+                      size: 22,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 15),
+                // Favorites Button
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                        builder: (_) => const FavoritesScreen(),
+                      ),
+                    );
+                  },
+                  child: const Icon(
+                    LucideIcons.heart,
+                    color: Colors.black,
+                    size: 26,
+                  ),
+                ),
+              ],
             ),
           ),
 
-          // Search Row
+          // 2. Search Row
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 10, 16, 15),
               child: SearchPill(
                 controller: _searchController,
-                onChanged: (val) => _applyFilters(), // Update logic
+                onChanged: (val) => _applyFilters(),
               ),
             ),
           ),
 
-          // NAYA: Horizontal Category List
+          // 3. Category List
           SliverToBoxAdapter(
             child: SizedBox(
               height: 40,
@@ -114,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () {
                       setState(() {
                         _selectedCategory = category;
-                        _applyFilters(); // Category click hote hi list refresh hogi
+                        _applyFilters();
                       });
                     },
                   );
@@ -123,10 +159,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // Thoda gap category aur cards ke beech
           const SliverToBoxAdapter(child: SizedBox(height: 20)),
 
-          // Generated Font Cards ya "No Results" message
+          // 4. Generated Cards (GRID OR LIST)
           _displayFonts.isEmpty
               ? SliverToBoxAdapter(
                   child: Padding(
@@ -145,22 +180,49 @@ class _HomeScreenState extends State<HomeScreen> {
                 )
               : SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final font = _displayFonts[index];
-                      return FontCard(
-                        key: ValueKey(
-                          font.name,
-                        ), // Card update bug solve karne ke liye zaroori
-                        font: font,
-                        isDarkTheme: index % 2 != 0,
-                        index: index,
-                      );
-                    }, childCount: _displayFonts.length),
-                  ),
+                  sliver: _isGridView
+                      // GRID VIEW LAYOUT
+                      ? SliverGrid(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 16,
+                                crossAxisSpacing: 16,
+                                childAspectRatio: 0.85,
+                              ),
+                          delegate: SliverChildBuilderDelegate((
+                            context,
+                            index,
+                          ) {
+                            final font = _displayFonts[index];
+                            return FontCard(
+                              key: ValueKey(font.name), // Bug solve key
+                              font: font,
+                              isDarkTheme: index % 3 == 0,
+                              index: index,
+                              isGridView: true,
+                            );
+                          }, childCount: _displayFonts.length),
+                        )
+                      // LIST VIEW LAYOUT
+                      : SliverList(
+                          delegate: SliverChildBuilderDelegate((
+                            context,
+                            index,
+                          ) {
+                            final font = _displayFonts[index];
+                            return FontCard(
+                              key: ValueKey(font.name), // Bug solve key
+                              font: font,
+                              isDarkTheme: index % 2 != 0,
+                              index: index,
+                              isGridView: false,
+                            );
+                          }, childCount: _displayFonts.length),
+                        ),
                 ),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 50)),
+          const SliverToBoxAdapter(child: SizedBox(height: 80)),
         ],
       ),
     );
