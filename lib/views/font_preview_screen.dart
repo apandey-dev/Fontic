@@ -17,91 +17,97 @@ class _FontPreviewScreenState extends State<FontPreviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text(widget.fontName),
-        leading: IconButton(
-          icon: const Icon(CupertinoIcons.back),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Controls Section
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade50,
-                border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
-              ),
-              child: Column(
-                children: [
-                  CupertinoTextField(
-                    controller: _textController,
-                    placeholder: "Type your own text...",
-                    padding: const EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    onChanged: (val) {
-                      setState(() {
-                        _previewText = val.isEmpty
-                            ? "The quick brown fox jumps over the lazy dog."
-                            : val;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      const Text(
-                        "Size",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Expanded(
-                        child: CupertinoSlider(
-                          value: _fontSize,
-                          min: 20,
-                          max: 120,
-                          activeColor: Colors.black,
-                          onChanged: (val) => setState(() => _fontSize = val),
-                        ),
-                      ),
-                      Text(
-                        "${_fontSize.toInt()}px",
-                        style: const TextStyle(color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+    // Container + SafeArea for notch protection
+    return Container(
+      color: Colors.white, // Preview screen ka background white hai
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            title: Text(widget.fontName),
+            leading: IconButton(
+              icon: const Icon(CupertinoIcons.back),
+              onPressed: () => Navigator.pop(context),
             ),
-
-            // Preview Area
-            Expanded(
-              child: Padding(
+          ),
+          body: Column(
+            children: [
+              // Controls Section
+              Container(
                 padding: const EdgeInsets.all(20),
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Center(
-                    child: Text(
-                      _previewText,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.getFont(
-                        widget.fontName,
-                        fontSize: _fontSize,
-                        color: Colors.black,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade50,
+                  border: Border(
+                    bottom: BorderSide(color: Colors.grey.shade200),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    CupertinoTextField(
+                      controller: _textController,
+                      placeholder: "Type your own text...",
+                      padding: const EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      onChanged: (val) {
+                        setState(() {
+                          _previewText = val.isEmpty
+                              ? "The quick brown fox jumps over the lazy dog."
+                              : val;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        const Text(
+                          "Size",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Expanded(
+                          child: CupertinoSlider(
+                            value: _fontSize,
+                            min: 20,
+                            max: 120,
+                            activeColor: Colors.black,
+                            onChanged: (val) => setState(() => _fontSize = val),
+                          ),
+                        ),
+                        Text(
+                          "${_fontSize.toInt()}px",
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // Preview Area
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Center(
+                      child: Text(
+                        _previewText,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.getFont(
+                          widget.fontName,
+                          fontSize: _fontSize,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

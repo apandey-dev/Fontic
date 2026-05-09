@@ -11,14 +11,14 @@ class FontCard extends StatefulWidget {
   final FontModel font;
   final bool isDarkTheme;
   final int index;
-  final bool isGridView; // NAYA: Card ko batayega ki chota dikhna hai ya bada
+  final bool isGridView;
 
   const FontCard({
     super.key,
     required this.font,
     required this.isDarkTheme,
     required this.index,
-    this.isGridView = false, // Default list view
+    this.isGridView = false,
   });
 
   @override
@@ -81,7 +81,6 @@ class _FontCardState extends State<FontCard>
         child: ScaleTransition(
           scale: _scaleAnimation,
           child: Container(
-            // Grid mode me margin grid handle karta hai, isliye yahan margin chota diya
             margin: EdgeInsets.only(bottom: widget.isGridView ? 0 : 24),
             padding: EdgeInsets.symmetric(
               horizontal: widget.isGridView ? 16 : 24,
@@ -113,9 +112,10 @@ class _FontCardState extends State<FontCard>
                 // TOP ROW
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start, // Align to top
                   children: [
-                    // Category Chip
-                    Expanded(
+                    // FIX: Expanded hata kar Flexible lagaya hai taaki full width na le
+                    Flexible(
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 10,
@@ -126,17 +126,17 @@ class _FontCardState extends State<FontCard>
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Row(
-                          mainAxisSize: MainAxisSize.min,
+                          mainAxisSize: MainAxisSize
+                              .min, // FIX: Width ko content ke hisaab se restrict karega
                           children: [
-                            if (!widget
-                                .isGridView) // Grid me icon hide kar do space bachane ke liye
+                            if (!widget.isGridView)
                               Icon(
                                 LucideIcons.type,
                                 size: 14,
                                 color: textColor.withOpacity(0.7),
                               ),
                             if (!widget.isGridView) const SizedBox(width: 4),
-                            Expanded(
+                            Flexible(
                               child: Text(
                                 widget.font.guessCategory,
                                 overflow: TextOverflow.ellipsis,
@@ -189,9 +189,7 @@ class _FontCardState extends State<FontCard>
                     vertical: widget.isGridView ? 10.0 : 0,
                   ),
                   child: Text(
-                    widget.isGridView
-                        ? "Aa"
-                        : "HELLO WORLD", // Grid me bada Aa dikhega
+                    widget.isGridView ? "Aa" : "HELLO WORLD",
                     style: GoogleFonts.getFont(
                       widget.font.name,
                       fontSize: widget.isGridView ? 45 : 38,
