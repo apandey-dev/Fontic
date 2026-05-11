@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -16,11 +17,11 @@ class ExportCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        width: 800, // Card ki width thodi adjust ki hai compact look ke liye
+        width: 800,
         height: 450,
         decoration: BoxDecoration(
-          color: Colors.white, // Day Theme: White Background
-          borderRadius: BorderRadius.circular(32), // Smooth corners
+          color: Colors.white, // DAY THEME: White Background
+          borderRadius: BorderRadius.circular(32),
           border: Border.all(color: Colors.black.withOpacity(0.08), width: 1.5),
           boxShadow: [
             BoxShadow(
@@ -46,7 +47,7 @@ class ExportCard extends StatelessWidget {
                 style: GoogleFonts.getFont(
                   fontName,
                   color: Colors.black87,
-                  fontSize: 32, // H3 ke hisaab se perfect size
+                  fontSize: 32,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -62,9 +63,8 @@ class ExportCard extends StatelessWidget {
                   style: GoogleFonts.getFont(
                     fontName,
                     color: Colors.black.withOpacity(0.85),
-                    fontSize:
-                        26, // Paragraph jaisa lagne ke liye chota aur clean font size
-                    height: 1.5, // Line height taaki padhne mein acha lage
+                    fontSize: 26,
+                    height: 1.5,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
@@ -79,34 +79,29 @@ class ExportCard extends StatelessWidget {
                 color: Colors.black.withOpacity(0.1),
               ),
 
-              const SizedBox(height: 25),
+              const SizedBox(height: 20),
 
               /// =========================
-              /// BOTTOM SECTION (App Name - FONTIC)
+              /// BOTTOM SECTION (App Name - FONTIC at Right Corner)
               /// =========================
               Row(
+                mainAxisAlignment:
+                    MainAxisAlignment.end, // Aligning items to the right corner
                 children: [
-                  // Chota sa dot icon thoda premium feel dene ke liye
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: Colors.black87,
-                      shape: BoxShape.circle,
-                    ),
+                  Icon(
+                    CupertinoIcons.sparkles,
+                    color: Colors.black54, // Subtle icon color
+                    size: 14, // Small icon size
                   ),
-                  const SizedBox(width: 12),
-
-                  // App Name
+                  const SizedBox(width: 8),
                   Text(
                     "FONTIC",
-                    style: GoogleFonts.inter(
-                      // Branding ke liye clean sans-serif font
-                      color: Colors.black87,
-                      fontSize: 18,
-                      letterSpacing:
-                          6.0, // Thoda space diya hai premium look ke liye
-                      fontWeight: FontWeight.w800,
+                    style: GoogleFonts.fredoka(
+                      // Updated to Fredoka Font
+                      color: Colors.black54, // Subtle watermark style text
+                      fontSize: 14, // Small font size
+                      letterSpacing: 3.5, // Perfect spacing for branding
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
