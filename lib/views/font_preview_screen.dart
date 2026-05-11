@@ -8,6 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../widgets/export_card.dart';
+import '../widgets/font_preview_view.dart';
 
 class FontPreviewScreen extends StatefulWidget {
   final String fontName;
@@ -147,51 +148,14 @@ class _FontPreviewScreenState extends State<FontPreviewScreen> {
                         });
                       },
                     ),
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        const Text(
-                          "Size",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Expanded(
-                          child: CupertinoSlider(
-                            value: _fontSize,
-                            min: 20,
-                            max: 120,
-                            activeColor: Colors.black,
-                            onChanged: (val) => setState(() => _fontSize = val),
-                          ),
-                        ),
-                        Text(
-                          "${_fontSize.toInt()}px",
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),
 
-              // Preview Area
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: Center(
-                      child: Text(
-                        _previewText,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.getFont(
-                          widget.fontName,
-                          fontSize: _fontSize,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+              // Preview Area (Now extracted)
+              FontPreviewView(
+                fontName: widget.fontName,
+                previewText: _previewText,
               ),
             ],
           ),
