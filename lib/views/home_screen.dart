@@ -31,7 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String _selectedCategory = 'All';
 
   // Grid vs List State
-  bool _isGridView = false;
+  bool _isGridView = true;
+  bool _isSearchVisible = false;
 
   @override
   void initState() {
@@ -79,6 +80,24 @@ class _HomeScreenState extends State<HomeScreen> {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // Toggle Search Button
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isSearchVisible = !_isSearchVisible;
+                      if (!_isSearchVisible) {
+                        _searchController.clear();
+                        _applyFilters();
+                      }
+                    });
+                  },
+                  child: Icon(
+                    _isSearchVisible ? LucideIcons.xCircle : LucideIcons.search,
+                    color: Colors.black,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 15),
                 // Layout Toggle Button (Grid/List)
                 GestureDetector(
                   onTap: () {
@@ -122,16 +141,17 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // 2. Search Row
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 10, 16, 15),
-              child: SearchPill(
-                controller: _searchController,
-                onChanged: (val) => _applyFilters(),
+          // 2. Search Row (Now Toggleable)
+          if (_isSearchVisible)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 15),
+                child: SearchPill(
+                  controller: _searchController,
+                  onChanged: (val) => _applyFilters(),
+                ),
               ),
             ),
-          ),
 
           // 3. Category List
           SliverToBoxAdapter(
