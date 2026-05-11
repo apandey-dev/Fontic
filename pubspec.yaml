@@ -35,6 +35,11 @@ dependencies:
 
   # Local storage for saving liked fonts
   shared_preferences: ^2.5.5
+  screenshot: ^3.0.0
+  path_provider: ^2.1.5
+  fluttertoast: ^9.0.0
+  permission_handler: ^12.0.1
+  open_filex: ^4.7.0
 
 # --------------------------------------------------
 # DEV DEPENDENCIES

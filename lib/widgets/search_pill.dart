@@ -44,16 +44,12 @@ class SearchPill extends StatelessWidget {
                   FocusManager.instance.primaryFocus?.unfocus();
                 },
 
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: "Search 1500+ fonts...",
-                  hintStyle: TextStyle(
-                    color: Colors.grey.shade400,
-                    fontSize: 16,
-                  ),
                   border: InputBorder.none,
                   isDense: true,
                 ),
-                style: const TextStyle(fontSize: 16, color: Colors.black),
+                style: const TextStyle(fontSize: 16),
               ),
             ),
           ),

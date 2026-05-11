@@ -1,6 +1,12 @@
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class FontPreviewScreen extends StatefulWidget {
   final String fontName;
@@ -14,12 +20,127 @@ class _FontPreviewScreenState extends State<FontPreviewScreen> {
   double _fontSize = 45;
   String _previewText = "The quick brown fox jumps over the lazy dog.";
   final TextEditingController _textController = TextEditingController();
+  final ScreenshotController _screenshotController = ScreenshotController();
+
+  Future<void> _downloadFontImage() async {
+    // Check and request permissions
+    if (Platform.isAndroid) {
+      // For Android 13+ (API 33+), we don't need storage permission for some cases, 
+      // but for direct directory access, ManageExternalStorage or Media permissions are needed.
+      // Trying the most common approach for Download folder.
+      PermissionStatus status;
+      if (await Permission.manageExternalStorage.isRestricted) {
+        status = await Permission.storage.request();
+      } else {
+        status = await Permission.manageExternalStorage.request();
+        if (status.isDenied) {
+          status = await Permission.storage.request();
+        }
+      }
+
+      if (!status.isGranted) {
+        Fluttertoast.showToast(msg: "Storage permission required to save image");
+        return;
+      }
+    }
+
+    try {
+      // 1. Capture the widget
+      final image = await _screenshotController.captureFromWidget(
+        Container(
+          width: 1080,
+          height: 1920,
+          padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 100),
+          color: Colors.black,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Spacer(),
+              Text(
+                "This is a font sample",
+                textAlign: TextAlign.center,
+                style: GoogleFonts.getFont(
+                  widget.fontName,
+                  color: Colors.white,
+                  fontSize: 50,
+                ),
+              ),
+              const SizedBox(height: 30),
+              Text(
+                widget.fontName,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.getFont(
+                  widget.fontName,
+                  color: Colors.white,
+                  fontSize: 120,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Spacer(),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Text(
+                  "Fontic",
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.4),
+                    fontSize: 35,
+                    letterSpacing: 2,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        delay: const Duration(milliseconds: 100),
+        pixelRatio: 2.0, // High quality
+      );
+
+      // 2. Determine path (Download folder)
+      Directory? directory;
+      if (Platform.isAndroid) {
+        directory = Directory('/storage/emulated/0/Download');
+        if (!await directory.exists()) {
+          directory = await getExternalStorageDirectory();
+        }
+      } else {
+        directory = await getDownloadsDirectory();
+      }
+
+      final String fileName = "Fontic_${widget.fontName.replaceAll(' ', '_')}_${DateTime.now().millisecondsSinceEpoch}.png";
+      final String filePath = '${directory!.path}/$fileName';
+      final File file = File(filePath);
+
+      // 3. Save the file
+      await file.writeAsBytes(image);
+
+      // 4. Show success Snackbar with "Open" action (since fluttertoast doesn't support buttons)
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Image saved to Downloads folder"),
+            backgroundColor: Colors.black,
+            behavior: SnackBarBehavior.floating,
+            action: SnackBarAction(
+              label: "OPEN",
+              textColor: Colors.blue,
+              onPressed: () {
+                OpenFilex.open(filePath);
+              },
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Error saving image: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     // Container + SafeArea for notch protection
     return Container(
-      color: Colors.white, // Preview screen ka background white hai
+      color: Colors.white,
       child: SafeArea(
         child: Scaffold(
           backgroundColor: Colors.white,
@@ -29,6 +150,12 @@ class _FontPreviewScreenState extends State<FontPreviewScreen> {
               icon: const Icon(CupertinoIcons.back),
               onPressed: () => Navigator.pop(context),
             ),
+            actions: [
+              IconButton(
+                icon: const Icon(CupertinoIcons.cloud_download),
+                onPressed: _downloadFontImage,
+              ),
+            ],
           ),
           body: Column(
             children: [

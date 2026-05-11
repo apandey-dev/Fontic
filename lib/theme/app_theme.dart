@@ -18,6 +18,16 @@ class AppTheme {
       fontFamily: fredokaFontFamily,
       textTheme: fredokaTextTheme,
 
+      inputDecorationTheme: InputDecorationTheme(
+        hintStyle: GoogleFonts.fredoka(),
+        labelStyle: GoogleFonts.fredoka(),
+        counterStyle: GoogleFonts.fredoka(),
+        helperStyle: GoogleFonts.fredoka(),
+        errorStyle: GoogleFonts.fredoka(),
+        prefixStyle: GoogleFonts.fredoka(),
+        suffixStyle: GoogleFonts.fredoka(),
+      ),
+
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
