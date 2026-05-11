@@ -4,118 +4,114 @@ import 'package:google_fonts/google_fonts.dart';
 class ExportCard extends StatelessWidget {
   final String fontName;
   final String previewText;
-  final String subtitleText;
 
   const ExportCard({
     super.key,
     this.fontName = 'Playpen Sans',
-    this.previewText = 'HELLO WORLD',
-    this.subtitleText =
-        'A beautiful demonstration of Playpen Sans\ntypography in a modern layout.',
+    this.previewText =
+        'The quick brown fox jumps over the lazy dog. A beautiful demonstration of modern typography in a simple layout.',
   });
 
   @override
   Widget build(BuildContext context) {
-    // Agar previewText empty hai, toh default "HELLO WORLD" dikhayega
-    final mainHeading = previewText.trim().isEmpty
-        ? "HELLO WORLD"
-        : previewText;
-
     return Center(
       child: Container(
-        width: 950,
-        height:
-            480, // Height adjust ki gayi hai taaki image jaisa perfect ratio mile
+        width: 800, // Card ki width thodi adjust ki hai compact look ke liye
+        height: 450,
         decoration: BoxDecoration(
-          // DAY THEME: White Background
-          color: Colors.white,
-
-          borderRadius: BorderRadius.circular(42),
-
-          // DAY THEME: Subtle dark border
+          color: Colors.white, // Day Theme: White Background
+          borderRadius: BorderRadius.circular(32), // Smooth corners
           border: Border.all(color: Colors.black.withOpacity(0.08), width: 1.5),
-
-          // DAY THEME: Lighter shadow suitable for white background
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 40,
-              spreadRadius: 4,
-              offset: const Offset(0, 10), // Thoda sa neeche ki taraf shadow
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 30,
+              spreadRadius: 2,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(42),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 50),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// =========================
-                /// MAIN TYPOGRAPHY (HELLO WORLD)
-                /// =========================
-                Text(
-                  mainHeading,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// =========================
+              /// TOP SECTION (H3 Style - Font Name)
+              /// =========================
+              Text(
+                fontName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.getFont(
+                  fontName,
+                  color: Colors.black87,
+                  fontSize: 32, // H3 ke hisaab se perfect size
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+
+              const SizedBox(height: 30),
+
+              /// =========================
+              /// MIDDLE SECTION (P Tag Style - Preview Text)
+              /// =========================
+              Expanded(
+                child: Text(
+                  previewText,
                   style: GoogleFonts.getFont(
                     fontName,
-                    color: Colors.black, // DAY THEME: Black text
-                    fontSize: 110, // Bada size image match karne ke liye
-                    height: 1.1,
-                    fontWeight: FontWeight.w800,
+                    color: Colors.black.withOpacity(0.85),
+                    fontSize:
+                        26, // Paragraph jaisa lagne ke liye chota aur clean font size
+                    height: 1.5, // Line height taaki padhne mein acha lage
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
+              ),
 
-                const SizedBox(height: 15),
+              /// =========================
+              /// DIVIDER LINE
+              /// =========================
+              Container(
+                width: double.infinity,
+                height: 1.2,
+                color: Colors.black.withOpacity(0.1),
+              ),
 
-                /// =========================
-                /// SUBTITLE TEXT
-                /// =========================
-                Text(
-                  subtitleText,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.getFont(
-                    fontName,
-                    color:
-                        Colors.black87, // Slightly lighter black for subtitle
-                    fontSize: 36,
-                    height: 1.4,
-                    fontWeight: FontWeight.w500,
+              const SizedBox(height: 25),
+
+              /// =========================
+              /// BOTTOM SECTION (App Name - FONTIC)
+              /// =========================
+              Row(
+                children: [
+                  // Chota sa dot icon thoda premium feel dene ke liye
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: Colors.black87,
+                      shape: BoxShape.circle,
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 12),
 
-                const Spacer(),
-
-                /// =========================
-                /// DIVIDER LINE
-                /// =========================
-                Container(
-                  width: double.infinity,
-                  height: 1.5,
-                  color: Colors.black.withOpacity(0.12), // Dark divider
-                ),
-
-                const SizedBox(height: 30),
-
-                /// =========================
-                /// BOTTOM SECTION (FONT NAME)
-                /// =========================
-                Text(
-                  "Font name: $fontName",
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.getFont(
-                    fontName,
-                    color: Colors.black, // Black text
-                    fontSize: 28,
-                    fontWeight: FontWeight.w500,
+                  // App Name
+                  Text(
+                    "FONTIC",
+                    style: GoogleFonts.inter(
+                      // Branding ke liye clean sans-serif font
+                      color: Colors.black87,
+                      fontSize: 18,
+                      letterSpacing:
+                          6.0, // Thoda space diya hai premium look ke liye
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
