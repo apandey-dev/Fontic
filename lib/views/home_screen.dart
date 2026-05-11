@@ -141,23 +141,40 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // 2. Search Row (Now Toggleable)
-          if (_isSearchVisible)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 10, 16, 15),
-                child: SearchPill(
-                  controller: _searchController,
-                  onChanged: (val) => _applyFilters(),
-                ),
-              ),
+          // 2. Search Row (Now Animated)
+          SliverToBoxAdapter(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return SizeTransition(
+                  sizeFactor: animation,
+                  axisAlignment: -1.0,
+                  child: FadeTransition(
+                    opacity: animation,
+                    child: child,
+                  ),
+                );
+              },
+              child: _isSearchVisible
+                  ? Padding(
+                      key: const ValueKey('searchBar'),
+                      padding: const EdgeInsets.fromLTRB(16, 10, 16, 15),
+                      child: SearchPill(
+                        controller: _searchController,
+                        onChanged: (val) => _applyFilters(),
+                      ),
+                    )
+                  : const SizedBox.shrink(key: ValueKey('noSearchBar')),
             ),
+          ),
 
           // 3. Category List
           SliverToBoxAdapter(
-            child: SizedBox(
-              height: 40,
-              child: ListView.builder(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10), // Added padding here
+              child: SizedBox(
+                height: 40,
+                child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
@@ -178,6 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+        ),
 
           const SliverToBoxAdapter(child: SizedBox(height: 20)),
 

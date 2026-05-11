@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import '../widgets/export_card.dart';
 
 class FontPreviewScreen extends StatefulWidget {
   final String fontName;
@@ -45,55 +46,14 @@ class _FontPreviewScreenState extends State<FontPreviewScreen> {
     }
 
     try {
-      // 1. Capture the widget
+      // 1. Capture the widget (Extracted to ExportCard)
       final image = await _screenshotController.captureFromWidget(
-        Container(
-          width: 1080,
-          height: 1920,
-          padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 100),
-          color: Colors.black,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Spacer(),
-              Text(
-                "This is a font sample",
-                textAlign: TextAlign.center,
-                style: GoogleFonts.getFont(
-                  widget.fontName,
-                  color: Colors.white,
-                  fontSize: 50,
-                ),
-              ),
-              const SizedBox(height: 30),
-              Text(
-                widget.fontName,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.getFont(
-                  widget.fontName,
-                  color: Colors.white,
-                  fontSize: 120,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Spacer(),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Text(
-                  "Fontic",
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.4),
-                    fontSize: 35,
-                    letterSpacing: 2,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-              ),
-            ],
-          ),
+        ExportCard(
+          fontName: widget.fontName,
+          previewText: _previewText,
         ),
         delay: const Duration(milliseconds: 100),
-        pixelRatio: 2.0, // High quality
+        pixelRatio: 3.0,
       );
 
       // 2. Determine path (Download folder)
